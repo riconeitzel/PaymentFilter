@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+	<modules>
+		<RicoNeitzel_PaymentFilter>
+			<active>true</active>
+			<codePool>community</codePool>
+		</RicoNeitzel_PaymentFilter>
+	</modules>
+</config>
