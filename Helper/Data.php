@@ -20,7 +20,7 @@
  *
  * @category   RicoNeitzel
  * @package    RicoNeitzel_PaymentFilter
- * @copyright  Copyright (c) 2009 Vinai Kopp http://netzarbeiter.com/
+ * @copyright  Copyright (c) 2010 Vinai Kopp http://netzarbeiter.com/
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -32,28 +32,20 @@
  * @author		Vinai Kopp <vinai@netzarbeiter.com>
  */
 class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
-{	
-	/**
-	 * Debug log method
-	 *
-	 * @param mixed $var
-	 */
-	public function log($var)
-	{
-		$var = print_r($var, 1);
-		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') $var = str_replace("\n", "\r\n", $var);
-		Mage::log($var);
-	}
-	
+{
+	protected $_forbiddenPaymentMethodsForCart;
+
+	protected $_customerGroup;
+
 	/**
 	 * Fetch all configured payment methods for the given store (0 = global config scope) as an options array for select widgets
 	 *
-	 * @param integer $store_id
-	 * @return array()
+	 * @param integer $storeId
+	 * @return array
 	 */
-	public function getPaymentMethodOptions($store_id)
+	public function getPaymentMethodOptions($storeId)
 	{
-		$methods = Mage::helper('payment')->getStoreMethods($store_id);
+		$methods = Mage::helper('payment')->getStoreMethods($storeId);
 		$options = array();
 		foreach ($methods as $method)
 		{
@@ -64,34 +56,37 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 		}
 		return $options;
 	}
-	
+
 	/**
 	 * Return the forbidden payment method codes in an array for the current cart items.
-	 * 
-	 * @return array()
+	 *
+	 * @return array
 	 * @see Netzarbeiter_ProductPayments_Helper_Payment::getStoreMethods()
 	 * @see Mage_Payment_Helper_Data::getStoreMethods()
 	 */
 	public function getForbiddenPaymentMethodsForCart()
 	{
-		$methods = array();
-		$product_ids  = Mage::getSingleton('checkout/cart')->getQuoteProductIds();
-		foreach ($product_ids as $pid)
+		if (null === $this->_forbiddenPaymentMethodsForCart)
 		{
-			$product = Mage::getModel('catalog/product')->setId($pid);
-			$product_payment_methods = $this->getForbiddenPaymentMethodsFromProduct($product);
-			
-			if (! $product_payment_methods) continue;
-			
-			foreach ($product_payment_methods as $_method)
+			$methods = array();
+			$items  = Mage::getSingleton('checkout/cart')->getQuote()->getAllItems();
+			foreach ($items as $item)
 			{
-				if (! in_array($_method, $methods)) $methods[] = $_method;
+				$productPaymentMethods = $this->getForbiddenPaymentMethodsFromProduct($item->getProduct());
+
+				if (! $productPaymentMethods) continue;
+
+				foreach ($productPaymentMethods as $method)
+				{
+					if (! in_array($method, $methods)) $methods[] = $method;
+				}
 			}
+			$this->_forbiddenPaymentMethodsForCart = $methods;
 		}
-		
-		return $methods;
+
+		return $this->_forbiddenPaymentMethodsForCart;
 	}
-	
+
 	/**
 	 * Return the payment methods that are configured as forbidden for the given product
 	 *
@@ -100,52 +95,48 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getForbiddenPaymentMethodsFromProduct(Mage_Catalog_Model_Product $product)
 	{
-		$product_payment_methods = $product->getProductPaymentMethods();
-		if (! isset($product_payment_methods))
+		$productPaymentMethods = $product->getProductPaymentMethods();
+		if (! isset($productPaymentMethods))
 		{
-			$product_payment_methods = $product->load($product->getId(), array('product_payment_methods'))
-				->getProductPaymentMethods();
+			$this->_loadProductPaymentMethodsOnCartItemProducts($product);
+			$productPaymentMethods = $product->getProductPaymentMethods();
 		}
-		if (! isset($product_payment_methods)) {
-			$product_payment_methods = array();
+		if (! is_array($productPaymentMethods))
+		{
+			$productPaymentMethods = explode(',', (string) $productPaymentMethods);
 		}
-		if (is_string($product_payment_methods)) $product_payment_methods = explode(',', $product_payment_methods);
-		return $product_payment_methods;
+		return $productPaymentMethods;
 	}
-	
+
 	/**
 	 * Return the allowed payment method codes for the current customer group.
-	 * If the customer isn't logged in, this method uses the NOT LOGGED IN customer
-	 * group, and not the default customer grouop set in system > config > customer
-	 * This is the reason this method should be used and not the current customer
-	 * group from the customer/session.
-	 * 
 	 *
-	 * @return array()
+	 * @return array
 	 */
 	public function getAllowedPaymentMethodsForCurrentGroup()
 	{
 		return $this->getCurrentCustomerGroup()->getAllowedPaymentMethods();
 	}
-	
+
 	/**
-	 * Return the current customer group. This will differ from the customer/session group
-	 * returned if the customer is logged out, because here the NOT LOGGED IN group is returned
-	 * instead of the default customer group from system > config > customer
+	 * Return the current customer group. If the customer is not logged in, the NOT LOGGED IN group is returned.
+	 * This is different from the default group configured in system > config > customer.
 	 *
 	 * @return Mage_Customer_Model_Group
 	 */
 	public function getCurrentCustomerGroup()
 	{
-		$session = Mage::getSingleton('customer/session');
-		if (! $session->isLoggedIn()) $customerGroupId = Mage_Customer_Model_Group::NOT_LOGGED_IN_ID;
-		else $customerGroupId = $session->getCustomerGroupId();
-		return Mage::getModel('customer/group')->load($customerGroupId);
+		if (! isset($this->_customerGroup))
+		{
+			$groupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
+			$this->_customerGroup = Mage::getModel('customer/group')->load($groupId);
+		}
+		return $this->_customerGroup;
 	}
-	
+
 	/**
 	 * Return the config value for the passed key (current store)
-	 * 
+	 *
 	 * @param string $key
 	 * @return string
 	 */
@@ -157,21 +148,49 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 
 	/**
 	 * Check if the extension has been disabled in the system configuration
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function moduleActive()
 	{
 		return ! (bool) $this->getConfig('disable_ext');
 	}
-	
+
 	/**
-	 * Return true if the method is called in the adminhtml interface
+	 * Load the product_payment_methods attribute on all quote item products.
 	 *
-	 * @return boolean
+	 * @param Mage_Catalog_Model_Product $productModel
+	 * @return RicoNeitzel_PaymentFilter_Helper_Data
 	 */
-	public function inAdmin()
+	public function loadProductPaymentMethodsOnCartItemProducts(Mage_Catalog_Model_Product $productModel = null)
 	{
-		return Mage::app()->getStore()->isAdmin();
+		if (! isset($productModel))
+		{
+			$productModel = Mage::getModel('catalog/product');
+		}
+
+		$productIds = Mage::getSingleton('checkout/cart')->getQuoteProductIds();
+		$attribute = $productModel->getResource()->getAttribute('product_payment_methods');
+		$select = $productModel->getResource()->getReadConnection()->select()
+			->from($attribute->getBackendTable(), array('entity_id', 'value'))
+			->where('attribute_id=?', $attribute->getId())
+			->where('entity_type_id=?', $productModel->getEntityType()->getEntityTypeId())
+		;
+		$values = $productModel->getResource()->getReadConnection()->fetchPairs($select);
+		foreach (Mage::getSingleton('checkout/cart')->getQuote()->getAllItems() as $item)
+		{
+			$product = $item->getProduct();
+			if (isset($values[$product->getId()]))
+			{
+				$value = explode(',', $values[$product->getId()]);
+			}
+			else
+			{
+				$value = array();
+			}
+			$product->setProductPaymentMethods($value);
+		}
+
+		return $this;
 	}
 }

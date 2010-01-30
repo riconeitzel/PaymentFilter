@@ -20,7 +20,7 @@
  *
  * @category   RicoNeitzel
  * @package    RicoNeitzel_PaymentFilter
- * @copyright  Copyright (c) 2009 Vinai Kopp http://netzarbeiter.com/
+ * @copyright  Copyright (c) 2010 Vinai Kopp http://netzarbeiter.com/
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -34,52 +34,68 @@
 class RicoNeitzel_PaymentFilter_Block_Adminhtml_Group_Form extends Mage_Adminhtml_Block_Customer_Group_Edit_Form
 {
 	/**
-	 * The config scope to get the active payment methods for. 
+	 * The store id to get the active payment methods for.
 	 *
 	 * @var int
 	 */
-	protected $_payment_method_config_scope = Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL;
-	
+	protected $_paymentMethodConfigStoreId;
+
 	/**
-	 * Return the config scope to get the active payment methods for. 
+	 * Set the default store code
+	 */
+	protected function _construct()
+	{
+		parent::construct();
+
+		$this->_paymentMethodConfigStoreId = Mage::app()->getStore(Mage_Core_Model_Store::ADMIN_CODE)->getId();
+	}
+
+	/**
+	 * Return the store id to get the active payment methods for.
 	 *
 	 * @return int
 	 */
-	protected function _getScope()
+	protected function _getStoreId()
 	{
-		return $this->_payment_method_config_scope;
+		return $this->_paymentMethodConfigStoreId;
 	}
-	
-    /**
-     * Extend form for rendering the payment method multiselect
-     * 
-     * @return RicoNeitzel_PaymentFilter_Block_Adminhtml_Group_Form
-     */
-    protected function _prepareLayout()
-    {
-			
-    	// remember the value, because parent::_prepareLayout() might set them to null after assigning to form
+
+	/**
+	 * Extend form for rendering the payment method multiselect
+	 *
+	 * @return Mage_Adminhtml_Block_Customer_Group_Edit_Form
+	 */
+	protected function _prepareLayout()
+	{
+    	/*
+		 * Remember the posted form value, because parent::_prepareLayout() might set them to null after assigning to form
+		 */
 		if (Mage::helper('payfilter')->moduleActive())
 		{
-			if( Mage::getSingleton('adminhtml/session')->getCustomerGroupData() )
+			if (Mage::getSingleton('adminhtml/session')->getCustomerGroupData())
 			{
 				$values = Mage::getSingleton('adminhtml/session')->getCustomerGroupData();
-			} else {
+			} else
+			{
 				$values = Mage::registry('current_group')->getData();
 			}
 			$value = isset($values['allowed_payment_methods']) ? $values['allowed_payment_methods'] : array();
 		}
-		
-		// parent setup of the form
+
+		/*
+		 * Parent setup of the form
+		 */
 		parent::_prepareLayout();
-		
-		// add payment method multiselect and set value
+
+		/*
+		 * Add payment method multiselect and set value
+		 */
 		if (Mage::helper('payfilter')->moduleActive())
 		{
 			$form = $this->getForm();
-			
-			$fieldset = $form->addFieldset('payment_fieldset', array('legend'=>Mage::helper('payfilter')->__('Group Payment Methods')));
-			
+
+			$fieldset = $form->addFieldset('payment_fieldset', array('legend'=> Mage::helper('payfilter')->__('Group Payment Methods')));
+
 			$payment = $fieldset->addField('payment_methods', 'multiselect',
 				array(
 					'name'  => 'allowed_payment_methods',
@@ -87,26 +103,25 @@ class RicoNeitzel_PaymentFilter_Block_Adminhtml_Group_Form extends Mage_Adminhtm
 					'title' => Mage::helper('payfilter')->__('Payment Methods'),
 					'class' => 'required-entry',
 					'required' => true,
-					'values' => Mage::helper('payfilter')->getPaymentMethodOptions($this->_getScope()),
+					'values' => Mage::helper('payfilter')->getPaymentMethodOptions($this->_getStoreId()),
 					'value' => $value,
 					'after_element_html' => $this->_getPaymentComment()
-	            )
-	        );
-	        Mage::log(get_class($payment));
-        }
-	        
+				)
+			);
+		}
+
 		return $this;
-    }
-    
-    /**
-     * Return the explanation for the payment methods multiselect as html
-     *
-     * @return string
-     */
-    protected function _getPaymentComment()
-    {
-    	$html = '';
-    	$html .= $this->__('To select multiple values, hold the Control-Key<br/>while clicking on the payment method names.');
-    	return '<div>' . $html . '</div>';
-    }
+	}
+
+	/**
+	 * Return the explanation for the payment methods multiselect as html
+	 *
+	 * @return string
+	 */
+	protected function _getPaymentComment()
+	{
+		$html = '';
+		$html .= $this->__('To select multiple values, hold the Control-Key<br/>while clicking on the payment method names.');
+		return '<div>' . $html . '</div>';
+	}
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Magento
  *
@@ -15,7 +14,7 @@
  *
  * @category   RicoNeitzel
  * @package    RicoNeitzel_PaymentFilter
- * @copyright  Copyright (c) 2008 Vinai Kopp http://netzarbeiter.com/
+ * @copyright  Copyright (c) 2010 Vinai Kopp http://netzarbeiter.com/
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -26,18 +25,12 @@
  * @package		RicoNeitzel_PaymentFilter
  * @author		Vinai Kopp <vinai@netzarabeiter.com>
  */
-
-/**
- * @var RicoNeitzel_PaymentFilter_Model_Eav_Setup $this
- * 
- * @see Mage_Sales_Model_Mysql4_Setup
- */
+ 
 $this->startSetup();
 
 $this->run("
-ALTER TABLE {$this->getTable('customer_group')} ADD allowed_payment_methods TEXT NOT NULL DEFAULT '';
+ALTER TABLE `{$this->getTable('customer_group')}` ADD `allowed_payment_methods` TEXT NOT NULL DEFAULT '';
 ");
-
 
 $this->addAttribute('catalog_product', 'product_payment_methods', array(
 	'group'           => 'Prices',
@@ -51,11 +44,6 @@ $this->addAttribute('catalog_product', 'product_payment_methods', array(
 	'default'         => '',
 	'user_defined'    => 1,
 	'required'        => 0,
-	//'apply_to'        => 'simple',
-	//'is_configurable' => true
 ));
 
 $this->endSetup();
-
-
-// EOF
