@@ -98,7 +98,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 		$productPaymentMethods = $product->getProductPaymentMethods();
 		if (! isset($productPaymentMethods))
 		{
-			$this->_loadProductPaymentMethodsOnCartItemProducts($product);
+			$this->loadProductPaymentMethodsOnCartItemProducts($product);
 			$productPaymentMethods = $product->getProductPaymentMethods();
 		}
 		if (! is_array($productPaymentMethods))
@@ -174,7 +174,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 		$select = $productModel->getResource()->getReadConnection()->select()
 			->from($attribute->getBackendTable(), array('entity_id', 'value'))
 			->where('attribute_id=?', $attribute->getId())
-			->where('entity_type_id=?', $productModel->getEntityType()->getEntityTypeId())
+			->where('entity_type_id=?', $productModel->getResource()->getTypeId())
 		;
 		$values = $productModel->getResource()->getReadConnection()->fetchPairs($select);
 		foreach (Mage::getSingleton('checkout/cart')->getQuote()->getAllItems() as $item)

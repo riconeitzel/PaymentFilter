@@ -143,6 +143,15 @@
 					</payfilter>
 				</observers>
 			</customer_group_load_after>
+			<catalog_product_save_before>
+				<observers>
+					<payfilter>
+						<type>singleton</type>
+						<class>payfilter/observer</class>
+						<method>catalogProductSaveBefore</method>
+					</payfilter>
+				</observers>
+			</catalog_product_save_before>
 		</events>
 	</adminhtml>
 

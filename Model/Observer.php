@@ -23,7 +23,7 @@
  * @copyright  Copyright (c) 2010 Vinai Kopp http://netzarbeiter.com/
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Observer for the customer group payment methods. Save the adminhtml settings.
  *
@@ -42,7 +42,6 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 	 */
 	public function customerGroupLoadAfter($observer)
 	{
-		Mage::log(__METHOD__);
 		if (! Mage::helper('payfilter')->moduleActive()) return;
 		$group = $observer->getEvent()->getObject();
 
@@ -60,7 +59,6 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 	 */
 	public function customerGroupSaveBefore($observer)
 	{
-		Mage::log(__METHOD__);
 		if (! Mage::helper('payfilter')->moduleActive()) return;
 		$group = $observer->getEvent()->getObject();
 
@@ -81,16 +79,34 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 
 	/**
 	 * Set the posted allowed payment methods on the customer group model.
-	 * 
+	 *
 	 * @param Mage_Customer_Model_Group $group
 	 * @return null
 	 */
 	protected function _setPaymentFilterOnGroup(Mage_Customer_Model_Group $group)
 	{
-		$allowedPaymentMethods = Mage::app()->getRequest()->getParam('allowed_payment_methods');
-		if (isset($allowedPaymentMethods))
+		if (Mage::app()->getRequest()->getParam('payment_methods_posted'))
 		{
+			$allowedPaymentMethods = Mage::app()->getRequest()->getParam('allowed_payment_methods');
 			$group->setAllowedPaymentMethods($allowedPaymentMethods);
+		}
+	}
+
+	/**
+	 * Initialize the payment methods attribute value wth an array if it is empty.
+	 * If we dont do this we cannot deselect all payment methods for a product.
+	 *
+	 * @param Varien_Event_Observer $observer
+	 */
+	public function catalogProductSaveBefore($observer)
+	{
+		if (! Mage::helper('payfilter')->moduleActive()) return;
+
+		$product = $observer->getEvent()->getProduct();
+		$params = Mage::app()->getRequest()->getParam('product');
+		if (! isset($params['product_payment_methods']))
+		{
+			$product->setProductPaymentMethods(array());
 		}
 	}
 
@@ -102,7 +118,6 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 	 */
 	public function paymentMethodIsActive($observer)
 	{
-		Mage::log(__METHOD__);
 		if (! Mage::helper('payfilter')->moduleActive()) return;
 
 		$checkResult = $observer->getEvent()->getResult();
@@ -118,13 +133,13 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 				$checkResult->isAvailable = false;
 			}
 		}
-		
+
 		/*
 		 * Check if the method is forbidden for the customers group
 		 */
 		if ($checkResult->isAvailable)
 		{
-			if (! in_array($method->getCode(), $helper->getAllowedPaymentMethodsForCurrentGroup()))
+			if (! in_array($method->getCode(), Mage::helper('payfilter')->getAllowedPaymentMethodsForCurrentGroup()))
 			{
 				$checkResult->isAvailable = false;
 			}

@@ -45,7 +45,7 @@ class RicoNeitzel_PaymentFilter_Block_Adminhtml_Group_Form extends Mage_Adminhtm
 	 */
 	protected function _construct()
 	{
-		parent::construct();
+		parent::_construct();
 
 		$this->_paymentMethodConfigStoreId = Mage::app()->getStore(Mage_Core_Model_Store::ADMIN_CODE)->getId();
 	}
@@ -93,21 +93,23 @@ class RicoNeitzel_PaymentFilter_Block_Adminhtml_Group_Form extends Mage_Adminhtm
 		if (Mage::helper('payfilter')->moduleActive())
 		{
 			$form = $this->getForm();
-
 			$fieldset = $form->addFieldset('payment_fieldset', array('legend'=> Mage::helper('payfilter')->__('Group Payment Methods')));
 
-			$payment = $fieldset->addField('payment_methods', 'multiselect',
-				array(
-					'name'  => 'allowed_payment_methods',
-					'label' => Mage::helper('payfilter')->__('Payment Methods'),
-					'title' => Mage::helper('payfilter')->__('Payment Methods'),
-					'class' => 'required-entry',
-					'required' => true,
-					'values' => Mage::helper('payfilter')->getPaymentMethodOptions($this->_getStoreId()),
-					'value' => $value,
-					'after_element_html' => $this->_getPaymentComment()
-				)
-			);
+			$fieldset->addField('payment_methods_posted', 'hidden', array(
+				'name' => 'payment_methods_posted',
+				'value' => '1',
+			));
+
+			$fieldset->addField('payment_methods', 'multiselect', array(
+				'name'  => 'allowed_payment_methods',
+				'label' => Mage::helper('payfilter')->__('Payment Methods'),
+				'title' => Mage::helper('payfilter')->__('Payment Methods'),
+				'class' => '',
+				'required' => false,
+				'values' => Mage::helper('payfilter')->getPaymentMethodOptions($this->_getStoreId()),
+				'value' => $value,
+				'after_element_html' => $this->_getPaymentComment()
+			));
 		}
 
 		return $this;
