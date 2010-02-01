@@ -1,4 +1,4 @@
-<?php
+
 /**
  * Magento
  *
@@ -31,6 +31,9 @@ every customer group. Also, Payment methods can be disabled for specific
 products. A customer can only use the payment methods during checkout
 available to his customer group AND not disabled for the products in the
 shopping cart.
+
+!!The extension only works with Magento 1.4.0.0-rc1 and later!!
+
 
 It was created by Vinai Kopp http://netzarbeiter.com/ for Rico Neitzel
 (http://n-punkt.de/).

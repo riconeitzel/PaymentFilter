@@ -26,21 +26,74 @@
 class RicoNeitzel_PaymentFilter_Model_Config_Source_Payment_Methods
 	extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
-    protected $_options;
-    
-    protected $_storeCode = Mage_Core_Model_Store::ADMIN_CODE;
-    
-    public function toOptionArray()
-    {
-        if (!$this->_options) {
+	protected $_options;
+
+	protected $_storeCode = Mage_Core_Model_Store::ADMIN_CODE;
+
+	public function toOptionArray()
+	{
+		if (!$this->_options)
+		{
 			$store = Mage::app()->getStore($this->_storeCode);
-        	$this->_options = Mage::helper('payfilter')->getPaymentMethodOptions($store->getId());
-        }
-        return $this->_options;
-    }
-    
-    public function getAllOptions()
-    {
-    	return $this->toOptionArray();
-    }
+			$this->_options = Mage::helper('payfilter')->getPaymentMethodOptions($store->getId());
+		}
+		return $this->_options;
+	}
+
+	public function getAllOptions()
+	{
+		return $this->toOptionArray();
+	}
+
+	/**
+	 * Retrieve Column(s) for Flat Catalog
+	 *
+	 * @return array
+	 */
+	public function getFlatColums()
+	{
+		$columns = array();
+		$columns[$this->getAttribute()->getAttributeCode()] = array(
+			'type'      => 'varchar(255)',
+			'unsigned'  => false,
+			'is_null'   => true,
+			'default'   => null,
+			'extra'     => null
+		);
+
+		return $columns;
+	}
+
+	/**
+	 * Retrieve Indexes for Flat Catalog
+	 *
+	 * @return array
+	 */
+	public function getFlatIndexes()
+	{
+		$indexes = array();
+
+		$index = 'IDX_' . strtoupper($this->getAttribute()->getAttributeCode());
+		$indexes[$index] = array(
+			'type'      => 'index',
+			'fields'    => array($this->getAttribute()->getAttributeCode())
+		);
+
+		$sortable   = $this->getAttribute()->getUsedForSortBy();
+
+		return $indexes;
+	}
+
+	/**
+	 * Retrieve Select For Flat Attribute update
+	 *
+	 * @param Mage_Eav_Model_Entity_Attribute_Abstract $attribute
+	 * @param int $store
+	 * @return Varien_Db_Select|null
+	 */
+	public function getFlatUpdateSelect($store)
+	{
+		return Mage::getResourceModel('eav/entity_attribute_option')
+			->getFlatUpdateSelect($this->getAttribute(), $store);
+	}
 }

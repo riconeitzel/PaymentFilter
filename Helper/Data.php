@@ -98,9 +98,15 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 		$productPaymentMethods = $product->getProductPaymentMethods();
 		if (! isset($productPaymentMethods))
 		{
+			/*
+			 * Fallback just in case - should not be used in practice, because the attribute
+			 * is configured under global/sales/quote/item/product_attributes and also
+			 * is added to the flat catalog table.
+			 */
 			$this->loadProductPaymentMethodsOnCartItemProducts($product);
 			$productPaymentMethods = $product->getProductPaymentMethods();
 		}
+		
 		if (! is_array($productPaymentMethods))
 		{
 			$productPaymentMethods = explode(',', (string) $productPaymentMethods);
