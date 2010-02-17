@@ -29,11 +29,6 @@
 	<modules>
 		<RicoNeitzel_PaymentFilter>
 			<version>0.1.4</version>
-			<depends>
-				<Mage_Payment/>
-				<Mage_Customer/>
-				<Mage_Catalog/>
-			</depends>
 		</RicoNeitzel_PaymentFilter>
 	</modules>
 	<global>

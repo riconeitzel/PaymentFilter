@@ -41,9 +41,10 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 	public function controllerFrontInitBefore($observer)
 	{
 		if (! Mage::helper('payfilter')->moduleActive()) return;
+		
 		if (version_compare(Mage::getVersion(), '1.4.0', '<'))
 		{
-			Mage::getConfig()->setNode('global/helpers/payment/rewrite/data/class', 'RicoNeitzel_PaymentFilter_Helper_Payment_Data');
+			Mage::getConfig()->setNode('global/helpers/payment/rewrite/data', 'RicoNeitzel_PaymentFilter_Helper_Payment_Data');
 		}
 	}
 
@@ -57,6 +58,7 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 	public function customerGroupLoadAfter($observer)
 	{
 		if (! Mage::helper('payfilter')->moduleActive()) return;
+		
 		$group = $observer->getEvent()->getObject();
 
 		$val = unserialize($group->getAllowedPaymentMethods());

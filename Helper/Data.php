@@ -121,7 +121,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getAllowedPaymentMethodsForCurrentGroup()
 	{
-		return $this->getCurrentCustomerGroup()->getAllowedPaymentMethods();
+		return (array) $this->getCurrentCustomerGroup()->getAllowedPaymentMethods();
 	}
 
 	/**

@@ -13,22 +13,24 @@ class RicoNeitzel_PaymentFilter_Helper_Payment_Data extends Mage_Payment_Helper_
 	public function getStoreMethods($store=null, $quote=null)
 	{
 		$methods = parent::getStoreMethods($store, $quote);
-		$tmp = array();
-
-		foreach ($methods as $method)
+		if (! Mage::app()->getStore()->isAdmin())
 		{
-			if (in_array($method->getCode(), Mage::helper('payfilter')->getForbiddenPaymentMethodsForCart()))
-			{
-				continue;
-			}
-			if (! in_array($method->getCode(), Mage::helper('payfilter')->getAllowedPaymentMethodsForCurrentGroup()))
-			{
-				continue;
-			}
-			$tmp[] = $method;
-		}
-		$methods = $tmp;
+			$tmp = array();
 
+			foreach ($methods as $method)
+			{
+				if (in_array($method->getCode(), Mage::helper('payfilter')->getForbiddenPaymentMethodsForCart()))
+				{
+					continue;
+				}
+				if (! in_array($method->getCode(), Mage::helper('payfilter')->getAllowedPaymentMethodsForCurrentGroup()))
+				{
+					continue;
+				}
+				$tmp[] = $method;
+			}
+			$methods = $tmp;
+		}
 		return $methods;
 	}
 }
