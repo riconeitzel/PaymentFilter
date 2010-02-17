@@ -34,6 +34,20 @@
 class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 {
 	/**
+	 * Override the payment helper for magento versions < 1.4
+	 *
+	 * @param Varien_Event_Observer $observer 
+	 */
+	public function controllerFrontInitBefore($observer)
+	{
+		if (! Mage::helper('payfilter')->moduleActive()) return;
+		if (version_compare(Mage::getVersion(), '1.4.0', '<'))
+		{
+			Mage::getConfig()->setNode('global/helpers/payment/rewrite/data/class', 'RicoNeitzel_PaymentFilter_Helper_Payment_Data');
+		}
+	}
+
+	/**
 	 * Unserialize the methods array.
 	 * Called in adminhtml and frontend area.
 	 *
@@ -112,6 +126,7 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 
 	/**
 	 * Check if a payment method is allowed.
+	 * Only triggered in Magento >= 1.4
 	 *
 	 * @param Varien_Event_Observer $observer
 	 * @return null

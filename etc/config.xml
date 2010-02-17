@@ -80,6 +80,17 @@
 				</item>
 			</quote>
 		</sales>
+		<events>
+			<controller_front_init_before>
+				<observers>
+					<payfilter>
+						<type>singleton</type>
+						<class>payfilter/observer</class>
+						<method>controllerFrontInitBefore</method>
+					</payfilter>
+				</observers>
+			</controller_front_init_before>
+		</events>
 	</global>
 
 	<frontend>
