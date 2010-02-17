@@ -46,6 +46,22 @@ class RicoNeitzel_PaymentFilter_Model_Config_Source_Payment_Methods
 	}
 
 	/**
+	 * Bugfix for Magento 1.3 - do not return the option array entry, only the label.
+	 *
+	 * @param mixed $value
+	 * @return string
+	 */
+	public function getOptionText($value)
+	{
+		$option = parent::getOptionText($value);
+		if (is_array($option) && isset($option['label']))
+		{
+			$option = $option['label'];
+		}
+		return $option;
+	}
+
+	/**
 	 * Retrieve Column(s) for Flat Catalog
 	 *
 	 * @return array
