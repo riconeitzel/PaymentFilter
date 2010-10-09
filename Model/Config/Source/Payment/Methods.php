@@ -46,19 +46,45 @@ class RicoNeitzel_PaymentFilter_Model_Config_Source_Payment_Methods
 	}
 
 	/**
-	 * Bugfix for Magento 1.3 - do not return the option array entry, only the label.
+	 * Get a text for option value
 	 *
-	 * @param mixed $value
+	 * @param string|integer $value
 	 * @return string
 	 */
 	public function getOptionText($value)
 	{
-		$option = parent::getOptionText($value);
-		if (is_array($option) && isset($option['label']))
+		$isMultiple = false;
+		if (strpos($value, ','))
 		{
-			$option = $option['label'];
+			$isMultiple = true;
+			$value = explode(',', $value);
 		}
-		return $option;
+
+		$options = $this->getAllOptions();
+
+		if ($isMultiple)
+		{
+			$values = array();
+			foreach ($options as $item)
+			{
+				if (in_array($item['value'], $value))
+				{
+					$values[] = $item['label'];
+				}
+			}
+			return $values;
+		}
+		else
+		{
+			foreach ($options as $item)
+			{
+				if ($item['value'] == $value)
+				{
+					return $item['label'];
+				}
+			}
+			return false;
+		}
 	}
 
 	/**
