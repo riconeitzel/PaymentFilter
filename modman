@@ -1,0 +1,8 @@
+#
+# RicoNeitzel_PaymentFilter modman file
+#
+
+app/etc/modules/RicoNeitzel_PaymentFilter.xml app/etc/modules/RicoNeitzel_PaymentFilter.xml
+app/code/community/RicoNeitzel/PaymentFilter app/code/community/RicoNeitzel/PaymentFilter
+
+app/locale/de_DE/RicoNeitzel_PaymentFilter.csv app/locale/de_DE/RicoNeitzel_PaymentFilter.csv
