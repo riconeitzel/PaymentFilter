@@ -32,7 +32,7 @@ products. A customer can only use the payment methods during checkout
 available to his customer group AND not disabled for the products in the
 shopping cart.
 
-This extension supports both Magento 1.3 and Magento 1.4.
+This extension supports Magento 1.3, Magento 1.4 and Magento 1.5.
 
 
 It was created by Vinai Kopp http://netzarbeiter.com/ for Rico Neitzel
