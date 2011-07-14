@@ -36,6 +36,11 @@
 			<payfilter>
 				<class>RicoNeitzel_PaymentFilter_Model</class>
 			</payfilter>
+			<payment>
+				<rewrite>
+					<method_free>RicoNeitzel_PaymentFilter_Model_Payment_Method_Free</method_free>
+				</rewrite>
+			</payment>
 		</models>
 		<resources>
 			<payfilter_setup>
@@ -119,7 +124,7 @@
 			</payment_method_is_active>
 		</events>
 	</frontend>
-	
+
 	<adminhtml>
 		<translate>
 			<modules>

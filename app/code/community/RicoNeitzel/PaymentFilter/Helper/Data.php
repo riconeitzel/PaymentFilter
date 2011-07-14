@@ -40,7 +40,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 	/**
 	 * Fetch all configured payment methods for the given store (0 = global
 	 * config scope) as an options array for select widgets.
-	 * 
+	 *
 	 *
 	 * @param integer $storeId
 	 * @param Mage_Sales_Model_Quote $quote
@@ -48,16 +48,6 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getPaymentMethodOptions($storeId, $quote = null)
 	{
-		if (is_null($quote))
-		{
-			/*
-			 * Use a fake quote object so the "free" method is available when activated.
-			 *
-			 * Thanks to Kiat Siong Ng (kiatng in the forum) for the report and
-			 * the patch!
-			 */
-			$quote = Mage::getModel('sales/quote')->setGrandTotal(0);
-		}
 		$methods = Mage::helper('payment')->getStoreMethods($storeId, $quote);
 		$options = array();
 		foreach ($methods as $method)
@@ -119,7 +109,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 			$this->loadProductPaymentMethodsOnCartItemProducts($product);
 			$productPaymentMethods = $product->getProductPaymentMethods();
 		}
-		
+
 		if (! is_array($productPaymentMethods))
 		{
 			$productPaymentMethods = explode(',', (string) $productPaymentMethods);
