@@ -20,9 +20,10 @@
  *
  * @category   RicoNeitzel
  * @package    RicoNeitzel_PaymentFilter
- * @copyright  Copyright (c) 2010 Vinai Kopp http://netzarbeiter.com/
+ * @copyright  Copyright (c) 2011 Vinai Kopp http://netzarbeiter.com/
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 class RicoNeitzel_PaymentFilter_Model_Config_Source_Payment_Methods
 	extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {

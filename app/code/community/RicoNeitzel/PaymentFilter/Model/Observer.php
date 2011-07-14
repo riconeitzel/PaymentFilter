@@ -20,7 +20,7 @@
  *
  * @category   RicoNeitzel
  * @package    RicoNeitzel_PaymentFilter
- * @copyright  Copyright (c) 2010 Vinai Kopp http://netzarbeiter.com/
+ * @copyright  Copyright (c) 2011 Vinai Kopp http://netzarbeiter.com/
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -36,12 +36,12 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 	/**
 	 * Override the payment helper for magento versions < 1.4
 	 *
-	 * @param Varien_Event_Observer $observer 
+	 * @param Varien_Event_Observer $observer
 	 */
 	public function controllerFrontInitBefore($observer)
 	{
 		if (! Mage::helper('payfilter')->moduleActive()) return;
-		
+
 		if (version_compare(Mage::getVersion(), '1.4.0', '<'))
 		{
 			Mage::getConfig()->setNode('global/helpers/payment/rewrite/data', 'RicoNeitzel_PaymentFilter_Helper_Payment_Data');
@@ -58,7 +58,7 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 	public function customerGroupLoadAfter($observer)
 	{
 		if (! Mage::helper('payfilter')->moduleActive()) return;
-		
+
 		$group = $observer->getEvent()->getObject();
 
 		$val = unserialize($group->getAllowedPaymentMethods());
