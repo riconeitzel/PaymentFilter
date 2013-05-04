@@ -27,9 +27,9 @@
 /**
  * Add the allowed_payment_methods to the customer_group model
  *
- * @category	RicoNeitzel
- * @package		RicoNeitzel_PaymentFilter
- * @author		Vinai Kopp <vinai@netzarabeiter.com>
+ * @category    RicoNeitzel
+ * @package     RicoNeitzel_PaymentFilter
+ * @author      Vinai Kopp <vinai@netzarabeiter.com>
  */
 
 $this->startSetup();
@@ -39,17 +39,17 @@ ALTER TABLE `{$this->getTable('customer_group')}` ADD `allowed_payment_methods` 
 ");
 
 $this->addAttribute('catalog_product', 'product_payment_methods', array(
-	'group'           => 'Prices',
-	'type'            => 'varchar',
-	'label'           => 'Disable payment methods for this product',
-	'input'           => 'multiselect',
-	'source'          => 'payfilter/config_source_payment_methods',
-	'backend'         => 'payfilter/entity_backend_payment_methods',
-	'global'          => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE,
-	'required'        => true,
-	'default'         => '',
-	'user_defined'    => 1,
-	'required'        => 0,
+    'group' => 'Prices',
+    'type' => 'varchar',
+    'label' => 'Disable payment methods for this product',
+    'input' => 'multiselect',
+    'source' => 'payfilter/config_source_payment_methods',
+    'backend' => 'payfilter/entity_backend_payment_methods',
+    'global' => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE,
+    'required' => true,
+    'default' => '',
+    'user_defined' => 1,
+    'required' => 0,
 ));
 
 $this->endSetup();

@@ -26,14 +26,14 @@
  */
 -->
 <config>
-	<modules>
-		<RicoNeitzel_PaymentFilter>
-			<active>true</active>
-			<codePool>community</codePool>
-			<depends>
-				<Mage_Payment/>
-				<Mage_Customer/>
-			</depends>
-		</RicoNeitzel_PaymentFilter>
-	</modules>
+    <modules>
+        <RicoNeitzel_PaymentFilter>
+            <active>true</active>
+            <codePool>community</codePool>
+            <depends>
+                <Mage_Payment/>
+                <Mage_Customer/>
+            </depends>
+        </RicoNeitzel_PaymentFilter>
+    </modules>
 </config>

@@ -32,15 +32,19 @@
  * @author     Vinai Kopp <vinai@netzarbeiter.com>
  */
 class RicoNeitzel_PaymentFilter_Model_Entity_Backend_Payment_Methods
-	extends Mage_Eav_Model_Entity_Attribute_Backend_Array
+    extends Mage_Eav_Model_Entity_Attribute_Backend_Array
 {
     public function beforeSave($object)
     {
         $data = $object->getData($this->getAttribute()->getAttributeCode());
 
-        if (! isset($data)) $data = array();
-		elseif (is_string($data)) $data = explode(',', $data);
-		elseif (! is_array($data)) $data = array();
+        if (!isset($data)) {
+            $data = array();
+        } elseif (is_string($data)) {
+            $data = explode(',', $data);
+        } elseif (!is_array($data)) {
+            $data = array();
+        }
 
         $object->setData($this->getAttribute()->getAttributeCode(), $data);
 

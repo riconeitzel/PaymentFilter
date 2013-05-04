@@ -33,97 +33,98 @@
  */
 class RicoNeitzel_PaymentFilter_Block_Adminhtml_Group_Form extends Mage_Adminhtml_Block_Customer_Group_Edit_Form
 {
-	/**
-	 * The store id to get the active payment methods for.
-	 *
-	 * @var int
-	 */
-	protected $_paymentMethodConfigStoreId;
+    /**
+     * The store id to get the active payment methods for.
+     *
+     * @var int
+     */
+    protected $_paymentMethodConfigStoreId;
 
-	/**
-	 * Set the default store code
-	 */
-	protected function _construct()
-	{
-		parent::_construct();
+    /**
+     * Set the default store code
+     */
+    protected function _construct()
+    {
+        parent::_construct();
 
-		$this->_paymentMethodConfigStoreId = Mage::app()->getStore(Mage_Core_Model_Store::ADMIN_CODE)->getId();
-	}
+        $this->_paymentMethodConfigStoreId = Mage::app()->getStore(Mage_Core_Model_Store::ADMIN_CODE)->getId();
+    }
 
-	/**
-	 * Return the store id to get the active payment methods for.
-	 *
-	 * @return int
-	 */
-	protected function _getStoreId()
-	{
-		return $this->_paymentMethodConfigStoreId;
-	}
+    /**
+     * Return the store id to get the active payment methods for.
+     *
+     * @return int
+     */
+    protected function _getStoreId()
+    {
+        return $this->_paymentMethodConfigStoreId;
+    }
 
-	/**
-	 * Extend form for rendering the payment method multiselect
-	 *
-	 * @return Mage_Adminhtml_Block_Customer_Group_Edit_Form
-	 */
-	protected function _prepareLayout()
-	{
-    	/*
-		 * Remember the posted form value, because parent::_prepareLayout() might set them to null after assigning to form
-		 */
-		if (Mage::helper('payfilter')->moduleActive())
-		{
-			if (Mage::getSingleton('adminhtml/session')->getCustomerGroupData())
-			{
-				$values = Mage::getSingleton('adminhtml/session')->getCustomerGroupData();
-			} else
-			{
-				$values = Mage::registry('current_group')->getData();
-			}
-			$value = isset($values['allowed_payment_methods']) ? $values['allowed_payment_methods'] : array();
-		}
+    /**
+     * Extend form for rendering the payment method multiselect
+     *
+     * @return Mage_Adminhtml_Block_Customer_Group_Edit_Form
+     */
+    protected function _prepareLayout()
+    {
+        /*
+         * Remember the posted form value, because parent::_prepareLayout() might
+         * set them to null after assigning to form.
+         */
+        if (Mage::helper('payfilter')->moduleActive()) {
+            if (Mage::getSingleton('adminhtml/session')->getCustomerGroupData()) {
+                $values = Mage::getSingleton('adminhtml/session')->getCustomerGroupData();
+            } else {
+                $values = Mage::registry('current_group')->getData();
+            }
+            $value = isset($values['allowed_payment_methods']) ? $values['allowed_payment_methods'] : array();
+        }
 
-		/*
-		 * Parent setup of the form
-		 */
-		parent::_prepareLayout();
+        /*
+         * Parent setup of the form
+         */
+        parent::_prepareLayout();
 
-		/*
-		 * Add payment method multiselect and set value
-		 */
-		if (Mage::helper('payfilter')->moduleActive())
-		{
-			$form = $this->getForm();
-			$fieldset = $form->addFieldset('payment_fieldset', array('legend'=> Mage::helper('payfilter')->__('Group Payment Methods')));
+        /*
+         * Add payment method multiselect and set value
+         */
+        if (Mage::helper('payfilter')->moduleActive()) {
+            $form = $this->getForm();
+            $fieldset = $form->addFieldset('payment_fieldset', array(
+                'legend' => Mage::helper('payfilter')->__('Group Payment Methods')
+            ));
 
-			$fieldset->addField('payment_methods_posted', 'hidden', array(
-				'name' => 'payment_methods_posted',
-				'value' => '1',
-			));
+            $fieldset->addField('payment_methods_posted', 'hidden', array(
+                'name' => 'payment_methods_posted',
+                'value' => '1',
+            ));
 
-			$fieldset->addField('payment_methods', 'multiselect', array(
-				'name'  => 'allowed_payment_methods',
-				'label' => Mage::helper('payfilter')->__('Payment Methods'),
-				'title' => Mage::helper('payfilter')->__('Payment Methods'),
-				'class' => '',
-				'required' => false,
-				'values' => Mage::helper('payfilter')->getPaymentMethodOptions($this->_getStoreId()),
-				'value' => $value,
-				'after_element_html' => $this->_getPaymentComment()
-			));
-		}
+            $fieldset->addField('payment_methods', 'multiselect', array(
+                'name' => 'allowed_payment_methods',
+                'label' => Mage::helper('payfilter')->__('Payment Methods'),
+                'title' => Mage::helper('payfilter')->__('Payment Methods'),
+                'class' => '',
+                'required' => false,
+                'values' => Mage::helper('payfilter')->getPaymentMethodOptions($this->_getStoreId()),
+                'value' => $value,
+                'after_element_html' => $this->_getPaymentComment()
+            ));
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Return the explanation for the payment methods multiselect as html
-	 *
-	 * @return string
-	 */
-	protected function _getPaymentComment()
-	{
-		$html = '';
-		$html .= $this->__('To select multiple values, hold the Control-Key<br/>while clicking on the payment method names.');
-		return '<div>' . $html . '</div>';
-	}
+    /**
+     * Return the explanation for the payment methods multiselect as html
+     *
+     * @return string
+     */
+    protected function _getPaymentComment()
+    {
+        $html = '';
+        $html .= $this->__(
+            'To select multiple values, hold the Control-Key<br/>while clicking on the payment method names.'
+        );
+        return '<div>' . $html . '</div>';
+    }
 }
