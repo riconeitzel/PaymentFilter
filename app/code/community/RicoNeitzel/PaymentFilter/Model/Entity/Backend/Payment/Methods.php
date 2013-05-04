@@ -25,10 +25,10 @@
  */
 
 /**
- * Backend model for attribute with multiple values, Netzarbeiter_ProductPayments version
+ * Backend model for attribute with multiple values, RicoNeitzel_PaymentFilter version
  *
- * @category   Netzarbeiter
- * @package    Netzarbeiter_ProductPayments
+ * @category   RicoNeitzel
+ * @package    RicoNeitzel_PaymentFilter
  * @author     Vinai Kopp <vinai@netzarbeiter.com>
  */
 class RicoNeitzel_PaymentFilter_Model_Entity_Backend_Payment_Methods
