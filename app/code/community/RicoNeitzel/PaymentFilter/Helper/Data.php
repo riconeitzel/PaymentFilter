@@ -48,15 +48,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getPaymentMethodOptions($storeId, $quote = null)
     {
-        $methods = Mage::helper('payment')->getStoreMethods($storeId, $quote);
-        $options = array();
-        foreach ($methods as $method) {
-            array_unshift($options, array(
-                'value' => $method->getCode(),
-                'label' => $method->getTitle(),
-            ));
-        }
-        return $options;
+        return Mage::helper('payment')->getPaymentMethodList(true, true, true);
     }
 
     /**
