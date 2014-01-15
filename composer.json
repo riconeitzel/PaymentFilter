@@ -1,0 +1,15 @@
+{
+    "name": "riconeitzel/payment-filter",
+    "type": "magento-module",
+    "description": "Magento PaymentFilter for Products and Customer Groups",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Vinai Kopp",
+            "email": "vinai@netzarbeiter.com"
+        }
+    ],
+    "require": {
+        "magento-hackathon/magento-composer-installer": "dev-master"
+    }
+}
