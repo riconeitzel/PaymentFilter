@@ -66,8 +66,10 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 
         $group = $observer->getEvent()->getObject();
 
-        $val = unserialize($group->getAllowedPaymentMethods());
-        $group->setAllowedPaymentMethods($val);
+        if (is_string($group->getAllowedPaymentMethods())) {
+            $val = unserialize($group->getAllowedPaymentMethods());
+            $group->setAllowedPaymentMethods($val);
+        }
     }
 
     /**
