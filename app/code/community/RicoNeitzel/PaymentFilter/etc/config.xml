@@ -48,16 +48,7 @@
                     <module>RicoNeitzel_PaymentFilter</module>
                     <class>Mage_Eav_Model_Entity_Setup</class>
                 </setup>
-                <connection>
-                    <use>default_setup</use>
-                </connection>
             </payfilter_setup>
-            <payfilter_write>
-                <use>default_write</use>
-            </payfilter_write>
-            <payfilter_read>
-                <use>default_read</use>
-            </payfilter_read>
         </resources>
         <helpers>
             <payfilter>
