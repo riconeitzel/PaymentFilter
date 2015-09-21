@@ -163,7 +163,10 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
          * Check if the method is forbidden for the customers group
          */
         if ($checkResult->isAvailable) {
-            if (!in_array($method->getCode(), Mage::helper('payfilter')->getAllowedPaymentMethodsForCurrentGroup())) {
+            $allowedPaymentMethodsForGroup = Mage::helper('payfilter')->getAllowedPaymentMethodsForCurrentGroup();
+            $allowedPaymentMethodsForCustomer = Mage::helper('payfilter')->getAllowedPaymentMethodsForCustomer();
+            $allowedPaymentMethods = array_merge($allowedPaymentMethodsForCustomer, $allowedPaymentMethodsForGroup);
+            if (!in_array($method->getCode(), $allowedPaymentMethods)) {
                 $checkResult->isAvailable = false;
             }
         }
