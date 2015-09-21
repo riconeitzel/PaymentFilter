@@ -44,6 +44,11 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
     private $_customerGroup;
 
     /**
+     * @var Mage_Customer_Model_Customer
+     */
+    private $_customer;
+
+    /**
      * Fetch all configured payment methods for the given store (0 = global
      * config scope) as an options array for select widgets.
      *
@@ -125,6 +130,16 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Return the allowed payment method codes for the current customer
+     *
+     * @return array
+     */
+    public function getAllowedPaymentMethodsForCustomer()
+    {
+        return (array)$this->getCurrentCustomer()->getAllowedPaymentMethods();
+    }
+
+    /**
      * Return the current customer group. If the customer is not logged in, the NOT LOGGED IN group is returned.
      * This is different from the default group configured in system > config > customer.
      *
@@ -138,6 +153,20 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $this->_customerGroup;
+    }
+
+    /**
+     * Return the current customer, if the customer is logged in
+     *
+     * @return Mage_Customer_Model_Customer
+     */
+    public function getCurrentCustomer()
+    {
+        if (!isset($this->_customer)) {
+            $this->_customer = Mage::getSingleton('customer/session')->getCustomer();
+        }
+
+        return $this->_customer;
     }
 
     /**
