@@ -33,9 +33,15 @@
  */
 class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    /**
+     * @var string[]
+     */
     protected $_forbiddenPaymentMethodsForCart;
 
-    protected $_customerGroup;
+    /**
+     * @var Mage_Customer_Model_Group
+     */
+    private $_customerGroup;
 
     /**
      * Fetch all configured payment methods for the given store (0 = global
@@ -104,6 +110,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
         if (!is_array($productPaymentMethds)) {
             $productPaymentMethds = explode(',', (string)$productPaymentMethds);
         }
+
         return $productPaymentMethds;
     }
 
@@ -129,6 +136,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
             $groupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
             $this->_customerGroup = Mage::getModel('customer/group')->load($groupId);
         }
+
         return $this->_customerGroup;
     }
 
@@ -141,6 +149,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
     public function getConfig($key)
     {
         $path = 'checkout/payfilter/' . $key;
+
         return Mage::getStoreConfig($path, Mage::app()->getStore());
     }
 
