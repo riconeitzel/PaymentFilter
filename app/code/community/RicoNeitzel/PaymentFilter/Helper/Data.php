@@ -33,9 +33,20 @@
  */
 class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    /**
+     * @var string[]
+     */
     protected $_forbiddenPaymentMethodsForCart;
 
-    protected $_customerGroup;
+    /**
+     * @var Mage_Customer_Model_Group
+     */
+    private $_customerGroup;
+
+    /**
+     * @var Mage_Customer_Model_Customer
+     */
+    private $_customer;
 
     /**
      * Fetch all configured payment methods for the given store (0 = global
@@ -104,6 +115,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
         if (!is_array($productPaymentMethds)) {
             $productPaymentMethds = explode(',', (string)$productPaymentMethds);
         }
+
         return $productPaymentMethds;
     }
 
@@ -118,6 +130,16 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Return the allowed payment method codes for the current customer
+     *
+     * @return array
+     */
+    public function getAllowedPaymentMethodsForCustomer()
+    {
+        return (array)$this->getCurrentCustomer()->getAllowedPaymentMethods();
+    }
+
+    /**
      * Return the current customer group. If the customer is not logged in, the NOT LOGGED IN group is returned.
      * This is different from the default group configured in system > config > customer.
      *
@@ -129,7 +151,22 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
             $groupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
             $this->_customerGroup = Mage::getModel('customer/group')->load($groupId);
         }
+
         return $this->_customerGroup;
+    }
+
+    /**
+     * Return the current customer, if the customer is logged in
+     *
+     * @return Mage_Customer_Model_Customer
+     */
+    public function getCurrentCustomer()
+    {
+        if (!isset($this->_customer)) {
+            $this->_customer = Mage::getSingleton('customer/session')->getCustomer();
+        }
+
+        return $this->_customer;
     }
 
     /**
@@ -141,6 +178,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
     public function getConfig($key)
     {
         $path = 'checkout/payfilter/' . $key;
+
         return Mage::getStoreConfig($path, Mage::app()->getStore());
     }
 
