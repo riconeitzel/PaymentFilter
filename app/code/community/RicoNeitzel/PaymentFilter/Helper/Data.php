@@ -208,6 +208,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
         $select = $productModel->getResource()->getReadConnection()->select()
             ->from($attribute->getBackendTable(), array('entity_id', 'value'))
             ->where('attribute_id=?', $attribute->getId())
+            ->where('store_id=?', Mage::app()->getStore()->getId())
             ->where('entity_type_id=?', $productModel->getResource()->getTypeId());
         $values = $productModel->getResource()->getReadConnection()->fetchPairs($select);
         foreach (Mage::getSingleton('checkout/cart')->getQuote()->getAllItems() as $item) {
