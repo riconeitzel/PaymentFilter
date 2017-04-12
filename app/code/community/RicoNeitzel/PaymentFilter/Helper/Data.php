@@ -102,15 +102,6 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
     public function getForbiddenPaymentMethodsFromProduct(Mage_Catalog_Model_Product $product)
     {
         $productPaymentMethds = $product->getProductPaymentMethods();
-        if (!isset($productPaymentMethds)) {
-            /*
-             * Fallback just in case - should not be used in practice, because the attribute
-             * is configured under global/sales/quote/item/product_attributes and also
-             * is added to the flat catalog table.
-             */
-            $this->loadProductPaymentMethodsOnCartItemProducts($product);
-            $productPaymentMethds = $product->getProductPaymentMethods();
-        }
 
         if (!is_array($productPaymentMethds)) {
             $productPaymentMethds = explode(',', (string)$productPaymentMethds);
@@ -190,36 +181,5 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
     public function moduleActive()
     {
         return !(bool)$this->getConfig('disable_ext');
-    }
-
-    /**
-     * Load the product_payment_methods attribute on all quote item products.
-     *
-     * @param Mage_Catalog_Model_Product $productModel
-     * @return RicoNeitzel_PaymentFilter_Helper_Data
-     */
-    public function loadProductPaymentMethodsOnCartItemProducts(Mage_Catalog_Model_Product $productModel = null)
-    {
-        if (!isset($productModel)) {
-            $productModel = Mage::getModel('catalog/product');
-        }
-
-        $attribute = $productModel->getResource()->getAttribute('product_payment_methods');
-        $select = $productModel->getResource()->getReadConnection()->select()
-            ->from($attribute->getBackendTable(), array('entity_id', 'value'))
-            ->where('attribute_id=?', $attribute->getId())
-            ->where('entity_type_id=?', $productModel->getResource()->getTypeId());
-        $values = $productModel->getResource()->getReadConnection()->fetchPairs($select);
-        foreach (Mage::getSingleton('checkout/cart')->getQuote()->getAllItems() as $item) {
-            $product = $item->getProduct();
-            if (isset($values[$product->getId()])) {
-                $value = explode(',', $values[$product->getId()]);
-            } else {
-                $value = array();
-            }
-            $product->setProductPaymentMethods($value);
-        }
-
-        return $this;
     }
 }
