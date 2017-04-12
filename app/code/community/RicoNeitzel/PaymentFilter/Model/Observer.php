@@ -116,8 +116,9 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Initialize the payment methods attribute value wth an array if it is empty.
-     * If we dont do this we cannot deselect all payment methods for a product.
+     * Initialize the payment methods attribute value with an array if it is
+     * empty.
+     * If we don' do this we cannot deselect all payment methods for a product.
      *
      * @param Varien_Event_Observer $observer
      */
@@ -149,12 +150,13 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
 
         $checkResult = $observer->getEvent()->getResult();
         $method = $observer->getEvent()->getMethodInstance();
+        $quote = $observer->getEvent()->getQuote();
 
         /*
          * Check if the method is forbidden by products in the cart
          */
         if ($checkResult->isAvailable) {
-            if (in_array($method->getCode(), Mage::helper('payfilter')->getForbiddenPaymentMethodsForCart())) {
+            if (in_array($method->getCode(), Mage::helper('payfilter')->getForbiddenPaymentMethodsForCart($quote))) {
                 $checkResult->isAvailable = false;
             }
         }

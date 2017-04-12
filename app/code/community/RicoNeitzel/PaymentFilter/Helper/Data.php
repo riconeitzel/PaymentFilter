@@ -33,6 +33,8 @@
  */
 class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    const EXPLANATION_URL = 'https://github.com/riconeitzel/PaymentFilter/issues/19';
+
     /**
      * @var string[]
      */
@@ -47,6 +49,9 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
      * @var Mage_Customer_Model_Customer
      */
     private $_customer;
+
+    /** @var  Mage_Sales_Model_Quote */
+    protected $_quote;
 
     /**
      * Fetch all configured payment methods for the given store (0 = global
@@ -65,17 +70,22 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Return the forbidden payment method codes in an array for the current cart items.
      *
+     * @param Mage_Sales_Model_Quote|null $quote The current quote
+     *
      * @return array
      * @see Netzarbeiter_ProductPayments_Helper_Payment::getStoreMethods()
      * @see Mage_Payment_Helper_Data::getStoreMethods()
      */
-    public function getForbiddenPaymentMethodsForCart()
+    public function getForbiddenPaymentMethodsForCart(Mage_Sales_Model_Quote $quote=null)
     {
+        if( is_null($quote) ) {
+            $quote = $this->getCurrentQuote();
+        }
         if (null === $this->_forbiddenPaymentMethodsForCart) {
             $methods = array();
-            $items = Mage::getSingleton('checkout/cart')->getQuote()->getAllItems();
+            $items = $quote->getAllItems();
             foreach ($items as $item) {
-                $productPaymentMethds = $this->getForbiddenPaymentMethodsFromProduct($item->getProduct());
+                $productPaymentMethds = $this->getForbiddenPaymentMethodsFromProduct($item->getProduct(), $quote);
 
                 if (!$productPaymentMethds) {
                     continue;
@@ -161,6 +171,27 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Return the current quote based on the customer session and log a
+     * self-explanatory warning.
+     *
+     * @return Mage_Sales_Model_Quote
+     */
+    public function getCurrentQuote()
+    {
+        Mage::log(
+            sprintf(
+                '%s: Loading quote from session. If this line floods the logs
+                 we are in _afterLoad of a cart being loaded. See: %s',
+                __CLASS__, self::EXPLANATION_URL
+            ), null, Zend_Log::NOTICE, true
+        );
+        if( !isset($this->_quote) )
+            $this->_quote = Mage::getSingleton('checkout/cart')->getQuote();
+
+        return $this->_quote;
+    }
+
+    /**
      * Return the config value for the passed key (current store)
      *
      * @param string $key
@@ -182,4 +213,5 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return !(bool)$this->getConfig('disable_ext');
     }
+
 }
