@@ -183,7 +183,7 @@ class RicoNeitzel_PaymentFilter_Helper_Data extends Mage_Core_Helper_Abstract
                 '%s: Loading quote from session. If this line floods the logs
                  we are in _afterLoad of a cart being loaded. See: %s',
                 __CLASS__, self::EXPLANATION_URL
-            ), null, Zend_Log::NOTICE, true
+            ), Zend_Log::NOTICE, 'paymentfilter.log', true
         );
         if( !isset($this->_quote) )
             $this->_quote = Mage::getSingleton('checkout/cart')->getQuote();
