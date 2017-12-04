@@ -118,7 +118,7 @@ class RicoNeitzel_PaymentFilter_Model_Observer extends Mage_Core_Model_Abstract
     /**
      * Initialize the payment methods attribute value with an array if it is
      * empty.
-     * If we don' do this we cannot deselect all payment methods for a product.
+     * If we don't do this we cannot deselect all payment methods for a product.
      *
      * @param Varien_Event_Observer $observer
      */
